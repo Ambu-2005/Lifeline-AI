@@ -5,7 +5,39 @@
   "type": "module",
   "scripts": {
     "dev": "vite"
+    I found one issue immediately.
+
+Your client/package.json only has:
+
+"scripts": {
+  "dev": "vite"
+}
+
+It is missing the build script, so Render cannot build your frontend.
+
+Step 1: Update client/package.json
+
+Replace the scripts section with:
+
+"scripts": {
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview"
+}
+
+So your file should become:
+
+{
+  "name": "client",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
+  
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
