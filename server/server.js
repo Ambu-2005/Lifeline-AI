@@ -1,18 +1,28 @@
-const mongoose = require('mongoose');
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
 
-const connectDB = async () => {
-  console.log("MONGO_URI exists:", !!process.env.MONGO_URI);
-  console.log("MONGO_URI starts with:", process.env.MONGO_URI?.substring(0, 15));
+// Import the database setup and route modules
+const connectDB = require('./config/db');
+const healthRoutes = require('./routes/healthRoutes');
+const authRoutes = require('./routes/authRoutes');
+const incidentRoutes = require('./routes/incidentRoutes');
 
-  try {
-    await mongoose.connect(
-      process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/lifelineai'
-    );
-    console.log('MongoDB connected');
-  } catch (error) {
-    console.error('MongoDB connection failed:', error.message);
-    process.exit(1);
-  }
-};
+const app = express();
+const PORT = process.env.PORT || 5000;
 
-module.exports = connectDB;
+// Middleware allows the frontend to call the backend safely
+app.use(cors());
+app.use(express.json());
+
+// Connect to MongoDB when the server starts
+connectDB();
+
+// Mount all API routes under /api
+app.use('/api', healthRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api', incidentRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
